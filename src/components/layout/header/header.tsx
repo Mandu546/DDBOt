@@ -21,7 +21,6 @@ import AccountsInfoLoader from './account-info-loader';
 import AccountSwitcher from './account-switcher';
 import MenuItems from './menu-items';
 import MobileMenu from './mobile-menu';
-import PlatformSwitcher from './platform-switcher';
 import './header.scss';
 
 type TAppHeaderProps = {
@@ -32,30 +31,22 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
     const { isDesktop } = useDevice();
     const { isAuthorizing, activeLoginid } = useApiBase();
     const { client } = useStore() ?? {};
-
     const { data: activeAccount } = useActiveAccount({ allBalanceData: client?.all_accounts_balance });
     const { accounts, getCurrency, is_virtual } = client ?? {};
     const has_wallet = Object.keys(accounts ?? {}).some(id => accounts?.[id].account_category === 'wallet');
-
     const currency = getCurrency?.();
     const { localize } = useTranslations();
-
     const { isSingleLoggingIn } = useOauth2();
-
     const { hubEnabledCountryList } = useFirebaseCountriesConfig();
     const { onRenderTMBCheck, isTmbEnabled } = useTMB();
     const is_tmb_enabled = isTmbEnabled() || window.is_tmb_enabled === true;
-    // No need for additional state management here since we're handling it in the layout component
 
     const renderAccountSection = useCallback(() => {
-        // Show loader during authentication processes
         if (isAuthenticating || isAuthorizing || (isSingleLoggingIn && !is_tmb_enabled)) {
             return <AccountsInfoLoader isLoggedIn isMobile={!isDesktop} speed={3} />;
         } else if (activeLoginid) {
             return (
                 <>
-                    {/* <CustomNotifications /> */}
-
                     {isDesktop &&
                         (has_wallet ? (
                             <Button
@@ -94,28 +85,20 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                                 {localize('Deposit')}
                             </Button>
                         ))}
-
                     <AccountSwitcher activeAccount={activeAccount} />
-
                     {isDesktop &&
                         (() => {
                             let redirect_url = new URL(standalone_routes.personal_details);
                             const is_hub_enabled_country = hubEnabledCountryList.includes(client?.residence || '');
-
                             if (has_wallet && is_hub_enabled_country) {
                                 redirect_url = new URL(standalone_routes.account_settings);
                             }
-                            // Check if the account is a demo account
-                            // Use the URL parameter to determine if it's a demo account, as this will update when the account changes
                             const urlParams = new URLSearchParams(window.location.search);
                             const account_param = urlParams.get('account');
                             const is_virtual = client?.is_virtual || account_param === 'demo';
-
                             if (is_virtual) {
-                                // For demo accounts, set the account parameter to 'demo'
                                 redirect_url.searchParams.set('account', 'demo');
                             } else if (currency) {
-                                // For real accounts, set the account parameter to the currency
                                 redirect_url.searchParams.set('account', currency);
                             }
                             return (
@@ -143,24 +126,16 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                             const currency = getQueryParams.get('account') ?? '';
                             const query_param_currency =
                                 currency || sessionStorage.getItem('query_param_currency') || 'USD';
-
                             try {
-                                // First, explicitly wait for TMB status to be determined
                                 const tmbEnabled = await isTmbEnabled();
-                                // Now use the result of the explicit check
                                 if (tmbEnabled) {
-                                    await onRenderTMBCheck(true); // Pass true to indicate it's from login button
+                                    await onRenderTMBCheck(true);
                                 } else {
-                                    // Always use OIDC if TMB is not enabled
                                     try {
                                         await requestOidcAuthentication({
                                             redirectCallbackUri: `${window.location.origin}/callback`,
                                             ...(query_param_currency
-                                                ? {
-                                                      state: {
-                                                          account: query_param_currency,
-                                                      },
-                                                  }
+                                                ? { state: { account: query_param_currency } }
                                                 : {}),
                                         });
                                     } catch (err) {
@@ -169,8 +144,7 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                                     }
                                 }
                             } catch (error) {
-                                // eslint-disable-next-line no-console
-                                console.error(error);
+                                console.error(error); // eslint-disable-line no-console
                             }
                         }}
                     >
@@ -181,6 +155,7 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                         onClick={() => {
                             window.open(standalone_routes.signup);
                         }}
+                        style={{ backgroundColor: '#6C63FF', borderColor: '#6C63FF' }}
                     >
                         <Localize i18n_default_text='Sign up' />
                     </Button>
@@ -205,6 +180,7 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
     ]);
 
     if (client?.should_hide_header) return null;
+
     return (
         <Header
             className={clsx('app-header', {
@@ -215,15 +191,14 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
             <Wrapper variant='left'>
                 <AppLogo />
                 <MobileMenu />
-                {isDesktop && <MenuItems.TradershubLink />}
+                {/* Removed TradershubLink to fix double logo — AppLogo handles it */}
                 {isDesktop && <MenuItems />}
-                {isDesktop && <PlatformSwitcher />}
+                {/* Removed PlatformSwitcher to hide "deriv Bot" dropdown */}
             </Wrapper>
             <Wrapper variant='right'>
                 {!isDesktop && <PWAInstallButton variant='primary' size='medium' />}
                 {renderAccountSection()}
             </Wrapper>
-            {/* <PWAInstallModalTest /> */}
         </Header>
     );
 });

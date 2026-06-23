@@ -4,7 +4,6 @@ import {
     LegacyCashierIcon as CashierLogo,
     LegacyChartsIcon as AnalyticsLogo,
     LegacyDerivIcon as RobotLogo,
-    LegacyHomeNewIcon as TradershubLogo,
     LegacyReportsIcon as ReportsLogo,
 } from '@deriv/quill-icons/Legacy';
 import {
@@ -22,14 +21,12 @@ export type PlatformsConfig = {
     icon: ReactNode;
     showInEU: boolean;
 };
-
 export type MenuItemsConfig = {
     as: 'a' | 'button';
     href: string;
     icon: ReactNode;
     label: string;
 };
-
 export type TAccount = {
     balance: string;
     currency: string;
@@ -62,7 +59,7 @@ export const platformsConfig: PlatformsConfig[] = [
     {
         active: false,
         buttonIcon: <SmarttraderLogo height={24} width={115} />,
-        description: localize('Trade the world’s markets with our popular user-friendly platform.'),
+        description: localize("Trade the world's markets with our popular user-friendly platform."),
         href: standalone_routes.smarttrader,
         icon: <SmarttraderLogo height={32} width={153} />,
         showInEU: false,
@@ -72,8 +69,8 @@ export const platformsConfig: PlatformsConfig[] = [
 export const TRADERS_HUB_LINK_CONFIG = {
     as: 'a',
     href: standalone_routes.traders_hub,
-    icon: <TradershubLogo iconSize='xs' />,
-    label: "Trader's Hub",
+    icon: <img src='/dopra-logo.png' alt='Dopra' style={{ height: '18px', width: 'auto', objectFit: 'contain' }} />,
+    label: 'Dopra',
 };
 
 export const MenuItems: MenuItemsConfig[] = [
