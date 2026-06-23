@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import ErrorBoundary from '@/components/error-component/error-boundary';
 import ErrorComponent from '@/components/error-component/error-component';
 import ChunkLoader from '@/components/loader/chunk-loader';
+import LoadingScreen from '@/components/loading-screen/LoadingScreen';
 import { api_base } from '@/external/bot-skeleton';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
@@ -17,9 +18,7 @@ const AppRootLoader = () => {
 
 const ErrorComponentWrapper = observer(() => {
     const { common } = useStore();
-
     if (!common.error) return null;
-
     return (
         <ErrorComponent
             header={common.error?.header}
@@ -40,6 +39,7 @@ const AppRoot = () => {
     const [is_api_initialized, setIsApiInitialized] = useState(false);
     const [is_tmb_check_complete, setIsTmbCheckComplete] = useState(false);
     const [, setIsTmbEnabled] = useState(false);
+    const [show_loading, setShowLoading] = useState(true);
     const { isTmbEnabled } = useTMB();
 
     // Effect to check TMB status - independent of API initialization
@@ -48,31 +48,26 @@ const AppRoot = () => {
             try {
                 const tmb_status = await isTmbEnabled();
                 const final_status = tmb_status || window.is_tmb_enabled === true;
-
                 setIsTmbEnabled(final_status);
-
                 setIsTmbCheckComplete(true);
             } catch (error) {
                 console.error('TMB check failed:', error);
                 setIsTmbCheckComplete(true);
             }
         };
-
         checkTmbStatus();
     }, []);
 
     // Initialize API when TMB check is complete with timeout fallback
     useEffect(() => {
         if (!is_tmb_check_complete) {
-            return; // Wait until TMB check is complete
+            return;
         }
-
         const timeoutId = setTimeout(() => {
             if (!is_api_initialized) {
                 setIsApiInitialized(true);
             }
         }, 5000);
-
         const initializeApi = async () => {
             if (!api_base_initialized.current) {
                 try {
@@ -83,16 +78,18 @@ const AppRoot = () => {
                     api_base_initialized.current = false;
                 } finally {
                     setIsApiInitialized(true);
-                    clearTimeout(timeoutId); // Clear timeout if API init completes
+                    clearTimeout(timeoutId);
                 }
             }
         };
-
         initializeApi();
         return () => clearTimeout(timeoutId);
     }, [is_tmb_check_complete]);
 
-    if (!store || !is_api_initialized) return <AppRootLoader />;
+    // Show Dopra loading screen until API is ready
+    if (!store || !is_api_initialized || show_loading) {
+        return <LoadingScreen onComplete={() => setShowLoading(false)} isReady={!!store && is_api_initialized} />;
+    }
 
     return (
         <Suspense fallback={<AppRootLoader />}>
