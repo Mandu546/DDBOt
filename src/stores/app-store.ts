@@ -7,7 +7,7 @@ import {
     showDigitalOptionsUnavailableError,
     standalone_routes,
 } from '@/components/shared';
-import { api_base, ApiHelpers, Dopra, runIrreversibleEvents } from '@/external/bot-skeleton';
+import { api_base, ApiHelpers, DBot, runIrreversibleEvents } from '@/external/bot-skeleton';
 import { setCurrency } from '@/external/bot-skeleton/scratch/utils';
 import { TApiHelpersStore } from '@/types/stores.types';
 import { localize } from '@deriv-com/translations';
@@ -176,7 +176,7 @@ export default class AppStore {
         if (!this.dbot_store) return;
 
         blockly_store.setLoading(true);
-        await Dopra.initWorkspace('/', this.dbot_store, this.api_helpers_store, ui.is_mobile, false);
+        await DBot.initWorkspace('/', this.dbot_store, this.api_helpers_store, ui.is_mobile, false);
 
         blockly_store.setContainerSize();
         blockly_store.setLoading(false);
@@ -202,8 +202,8 @@ export default class AppStore {
     };
 
     onUnmount = () => {
-        Dopra.terminateBot();
-        Dopra.terminateConnection();
+        DBot.terminateBot();
+        DBot.terminateConnection();
         if (window.Blockly?.derivWorkspace) {
             clearInterval(window.Blockly?.derivWorkspace.save_workspace_interval);
             window.Blockly.derivWorkspace?.dispose();
@@ -293,7 +293,7 @@ export default class AppStore {
                                 });
                         });
                     }
-                    Dopra.initializeInterpreter();
+                    DBot.initializeInterpreter();
                 }
             }
         );
