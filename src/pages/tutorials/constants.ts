@@ -3,7 +3,7 @@ import { localize } from '@deriv-com/translations';
 import { TFaqContent, TGuideContent, TQuickStrategyContent, TUserGuideContent } from './tutorials.types';
 
 export const USER_GUIDE = 'user guide';
-export const VIDEOS = 'videos on deriv bot';
+export const VIDEOS = 'videos on Dopra';
 export const QUICK_STRATEGY_GUIDES = 'quick strategy guides';
 
 export const user_guide_content = (): TUserGuideContent[] => [
@@ -28,7 +28,7 @@ export const user_guide_content = (): TUserGuideContent[] => [
 export const guide_content = (): TGuideContent[] => [
     {
         id: 1,
-        type: 'DBotVideo',
+        type: 'DopraVideo',
         content: localize('An introduction to Dopra Bot'),
         url: 'https://www.youtube.com/embed/lthEgaIY1uw',
         src: getImageLocation('intro_to_deriv_bot.png'),
@@ -36,7 +36,7 @@ export const guide_content = (): TGuideContent[] => [
     },
     {
         id: 2,
-        type: 'DBotVideo',
+        type: 'DopraVideo',
         content: localize('How to build a basic trading bot with Dopra Bot'),
         url: 'https://www.youtube.com/embed/mnpi2g7YakU',
         src: getImageLocation('build_a_bot.png'),
@@ -44,7 +44,7 @@ export const guide_content = (): TGuideContent[] => [
     },
     {
         id: 3,
-        type: 'DBotVideo',
+        type: 'DopraVideo',
         content: localize('How to use Martingale strategy on Dopra Bot'),
         url: 'https://www.youtube.com/embed/FSslvF7P00I',
         src: getImageLocation('how_to_use_martingale.jpg'),
@@ -52,7 +52,7 @@ export const guide_content = (): TGuideContent[] => [
     },
     {
         id: 4,
-        type: 'DBotVideo',
+        type: 'DopraVideo',
         content: localize('Introducing Accumulator Options on Dopra Bot: Available for automated trading'),
         url: 'https://www.youtube.com/embed/uMBBmdNaadU',
         src: getImageLocation('introducing_accumulators_on_deriv_bot.png'),

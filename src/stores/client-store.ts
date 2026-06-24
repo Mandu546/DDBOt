@@ -237,7 +237,7 @@ export default class ClientStore {
     }
 
     isBotAllowed = () => {
-        // Stop showing Bot, DBot, DSmartTrader for logged out EU IPs
+        // Stop showing Bot, Dopra, DSmartTrader for logged out EU IPs
         if (!this.is_logged_in && this.is_eu_country) return false;
         const is_mf = this.landing_company_shortcode === 'maltainvest';
         return this.is_virtual ? this.is_eu_or_multipliers_only : !is_mf && !this.is_options_blocked;

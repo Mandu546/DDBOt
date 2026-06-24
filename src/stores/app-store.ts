@@ -7,7 +7,7 @@ import {
     showDigitalOptionsUnavailableError,
     standalone_routes,
 } from '@/components/shared';
-import { api_base, ApiHelpers, DBot, runIrreversibleEvents } from '@/external/bot-skeleton';
+import { api_base, ApiHelpers, Dopra, runIrreversibleEvents } from '@/external/bot-skeleton';
 import { setCurrency } from '@/external/bot-skeleton/scratch/utils';
 import { TApiHelpersStore } from '@/types/stores.types';
 import { localize } from '@deriv-com/translations';
@@ -33,7 +33,7 @@ export default class AppStore {
             registerOnAccountSwitch: action,
             registerLandingCompanyChangeReaction: action,
             registerResidenceChangeReaction: action,
-            setDBotEngineStores: action,
+            setDopraEngineStores: action,
             onClickOutsideBlockly: action,
             showDigitalOptionsMaltainvestError: action,
         });
@@ -176,7 +176,7 @@ export default class AppStore {
         if (!this.dbot_store) return;
 
         blockly_store.setLoading(true);
-        await DBot.initWorkspace('/', this.dbot_store, this.api_helpers_store, ui.is_mobile, false);
+        await Dopra.initWorkspace('/', this.dbot_store, this.api_helpers_store, ui.is_mobile, false);
 
         blockly_store.setContainerSize();
         blockly_store.setLoading(false);
@@ -202,8 +202,8 @@ export default class AppStore {
     };
 
     onUnmount = () => {
-        DBot.terminateBot();
-        DBot.terminateConnection();
+        Dopra.terminateBot();
+        Dopra.terminateConnection();
         if (window.Blockly?.derivWorkspace) {
             clearInterval(window.Blockly?.derivWorkspace.save_workspace_interval);
             window.Blockly.derivWorkspace?.dispose();
@@ -293,7 +293,7 @@ export default class AppStore {
                                 });
                         });
                     }
-                    DBot.initializeInterpreter();
+                    Dopra.initializeInterpreter();
                 }
             }
         );
@@ -317,7 +317,7 @@ export default class AppStore {
         );
     };
 
-    setDBotEngineStores = () => {
+    setDopraEngineStores = () => {
         const { flyout, toolbar, save_modal, dashboard, load_modal, run_panel, blockly_store, summary_card } =
             this.root_store;
         const { client, common } = this.core;
